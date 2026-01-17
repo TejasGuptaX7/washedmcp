@@ -10,7 +10,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.indexer import index_codebase
-from src.searcher import search_code, is_indexed
+from src.searcher import search_code_with_stats, is_indexed
 from src.toon_formatter import format_results
 
 
@@ -24,19 +24,23 @@ def cmd_index(path: str, skip_summarize: bool = False) -> dict:
 
 
 def cmd_search(query: str, top_k: int = 5, output_format: str = "toon") -> dict:
-    """Search the indexed codebase"""
+    """Search the indexed codebase with token statistics"""
     try:
         if not is_indexed():
             return {"status": "error", "error": "Codebase not indexed. Run index first."}
 
-        results = search_code(query, top_k=top_k)
-        formatted = format_results(results, format=output_format)
+        # Search with token stats
+        results, token_stats = search_code_with_stats(query, top_k=top_k)
+        
+        # Format results with token stats included
+        formatted = format_results(results, format=output_format, token_stats=token_stats)
 
         return {
             "status": "success",
             "count": len(results),
             "results": results,
-            "formatted": formatted
+            "formatted": formatted,
+            "token_stats": token_stats
         }
     except Exception as e:
         return {"status": "error", "error": str(e)}

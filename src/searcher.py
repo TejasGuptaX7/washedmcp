@@ -3,6 +3,7 @@
 import os
 from src.embedder import embed_query
 from src.database import init_db, search as db_search, get_stats
+from src.token_counter import count_tokens, estimate_file_tokens, calculate_savings
 
 
 def search_code(
@@ -36,6 +37,53 @@ def search_code(
     except Exception as e:
         print(f"Search error: {e}")
         return []
+
+
+def search_code_with_stats(
+    query: str,
+    persist_path: str = "./.washedmcp/chroma",
+    top_k: int = 5
+) -> tuple[list[dict], dict]:
+    """
+    Search for code and calculate token savings.
+
+    Args:
+        query: Natural language search query
+        persist_path: Path to the ChromaDB persistence directory
+        top_k: Number of results to return
+
+    Returns:
+        Tuple of (results, token_stats)
+        token_stats contains: tokens_used, tokens_without_search, tokens_saved, percent_saved
+    """
+    results = search_code(query, persist_path, top_k)
+    
+    if not results:
+        return results, {
+            "tokens_used": 0,
+            "tokens_without_search": 0,
+            "tokens_saved": 0,
+            "percent_saved": 0.0
+        }
+    
+    # Calculate tokens in search results (the code snippets returned)
+    result_code = "\n".join(r.get("code", "") for r in results)
+    tokens_used = count_tokens(result_code)
+    
+    # Estimate tokens if we had to read the full files
+    # Get unique file paths from results
+    file_paths = list(set(r.get("file_path", "") for r in results if r.get("file_path")))
+    tokens_without_search = sum(estimate_file_tokens(fp) for fp in file_paths)
+    
+    # If we couldn't read files, estimate based on typical file size
+    if tokens_without_search == 0:
+        # Assume average file is ~500 tokens, and we'd need to read ~3 files to find what we want
+        tokens_without_search = 500 * max(3, len(file_paths))
+    
+    # Calculate savings
+    token_stats = calculate_savings(tokens_used, tokens_without_search)
+    
+    return results, token_stats
 
 
 def is_indexed(persist_path: str = "./.washedmcp/chroma") -> bool:

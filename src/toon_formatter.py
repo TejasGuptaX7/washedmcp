@@ -2,9 +2,27 @@
 TOON (Token-Optimized Object Notation) formatter for search results.
 
 Formats search results in a compact, token-efficient tabular format.
+Now includes token counting to show savings!
 """
 
 import json
+from typing import Optional
+
+
+def _get_token_counter():
+    """Lazy import token counter to avoid circular imports."""
+    try:
+        from src.token_counter import count_tokens, calculate_savings
+        return count_tokens, calculate_savings
+    except ImportError:
+        # Fallback if token_counter not available
+        def count_tokens(text):
+            return len(text) // 4
+        def calculate_savings(used, total):
+            saved = max(0, total - used)
+            pct = round((saved / total) * 100, 1) if total > 0 else 0
+            return {"tokens_used": used, "tokens_without_search": total, "tokens_saved": saved, "percent_saved": pct}
+        return count_tokens, calculate_savings
 
 
 def truncate(value: str, max_length: int) -> str:
@@ -96,23 +114,66 @@ def format_results_json(results: list[dict]) -> str:
     return json.dumps(results, indent=2)
 
 
-def format_results(results: list[dict], format: str = "toon") -> str:
+def format_results(results: list[dict], format: str = "toon", token_stats: Optional[dict] = None) -> str:
     """
     Format search results in the specified format.
 
     Args:
         results: list of search result dictionaries
         format: "toon" or "json"
+        token_stats: optional dict with token statistics
 
     Returns:
         Formatted string
     """
     if format == "toon":
-        return format_results_toon(results)
+        output = format_results_toon(results)
     elif format == "json":
-        return format_results_json(results)
+        output = format_results_json(results)
     else:
         raise ValueError(f"Unknown format: {format}. Use 'toon' or 'json'.")
+    
+    # Append token stats if provided
+    if token_stats:
+        output += f"\n\n📊 tokens_used:{token_stats['tokens_used']} saved:{token_stats['tokens_saved']} ({token_stats['percent_saved']}%)"
+    
+    return output
+
+
+def format_with_token_stats(
+    results: list[dict],
+    full_file_tokens: int,
+    format: str = "toon"
+) -> tuple[str, dict]:
+    """
+    Format results and calculate token savings.
+    
+    Args:
+        results: Search results
+        full_file_tokens: Estimated tokens if reading full files
+        format: Output format ("toon" or "json")
+        
+    Returns:
+        Tuple of (formatted_output, token_stats_dict)
+    """
+    count_tokens, calculate_savings = _get_token_counter()
+    
+    # Format results first
+    if format == "toon":
+        formatted = format_results_toon(results)
+    else:
+        formatted = format_results_json(results)
+    
+    # Count tokens in output
+    output_tokens = count_tokens(formatted)
+    
+    # Calculate savings
+    stats = calculate_savings(output_tokens, full_file_tokens)
+    
+    # Append stats to output
+    final_output = formatted + f"\n\n📊 tokens_used:{stats['tokens_used']} saved:{stats['tokens_saved']} ({stats['percent_saved']}%)"
+    
+    return final_output, stats
 
 
 if __name__ == "__main__":
