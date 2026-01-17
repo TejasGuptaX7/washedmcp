@@ -20,7 +20,9 @@
       "mcp__Github_MCP__search_users",
       "mcp__Github_MCP__search_repositories",
       "mcp__washedmcp__listAllMCPServers",
-      "mcp__washedmcp__analyzeAndExecute"
+      "mcp__washedmcp__analyzeAndExecute",
+      "Bash(dir /s /b \"C:\\\\Users\\\\Clarissa\\\\Documents\\\\Code\\\\Hackathon\\\\nexhacks\\\\washed\\\\washedmcp\")",
+      "Bash(dir /s /b \"C:\\\\Users\\\\Clarissa\\\\Documents\\\\Code\\\\Hackathon\\\\nexhacks\\\\washed\\\\.claude\")"
     ]
   },
   "enableAllProjectMcpServers": true,
