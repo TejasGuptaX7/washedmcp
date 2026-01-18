@@ -38,7 +38,10 @@
       "mcp__washedmcp__getRecentToolCalls",
       "WebFetch(domain:registry.smithery.ai)",
       "mcp___upstash_context7-mcp__resolve-library-id",
-      "mcp___upstash_context7-mcp__query-docs"
+      "mcp___upstash_context7-mcp__query-docs",
+      "mcp__washedmcp__cleanupServer",
+      "mcp___executeautomation_playwright-mcp-server__playwright_navigate",
+      "mcp___executeautomation_playwright-mcp-server__playwright_screenshot"
     ]
   },
   "enableAllProjectMcpServers": true,

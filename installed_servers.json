@@ -1,66 +1,47 @@
 {
-  "updatedAt": "2026-01-18T02:54:10.581Z",
+  "updatedAt": "2026-01-18T04:26:04.638Z",
   "servers": [
     {
       "qualifiedName": "@microsoft/playwright-mcp",
       "displayName": "Playwright Automation",
       "connectionType": "local",
       "status": "connected",
-      "installedAt": "2026-01-18T02:11:49.276Z",
+      "installedAt": "2026-01-18T04:16:24.797Z",
       "config": {
         "command": "npx",
         "args": [
           "-y",
           "@microsoft/playwright-mcp"
+        ]
+      }
+    },
+    {
+      "qualifiedName": "@executeautomation/playwright-mcp-server",
+      "displayName": "Playwright",
+      "connectionType": "local",
+      "status": "connected",
+      "installedAt": "2026-01-18T04:16:36.284Z",
+      "config": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@executeautomation/playwright-mcp-server"
         ],
         "env": {}
       }
     },
     {
-      "qualifiedName": "@smithery-ai/github",
-      "displayName": "Github",
+      "qualifiedName": "googlecalendar",
+      "displayName": "Google Calendar",
       "connectionType": "local",
       "status": "connected",
-      "installedAt": "2026-01-18T02:19:39.348Z",
+      "installedAt": "2026-01-18T04:26:04.638Z",
       "config": {
         "command": "npx",
         "args": [
           "-y",
-          "@smithery-ai/github"
-        ],
-        "env": {
-          "githubPersonalAccessToken": "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"
-        }
-      }
-    },
-    {
-      "qualifiedName": "trello",
-      "displayName": "Trello",
-      "connectionType": "local",
-      "status": "connected",
-      "installedAt": "2026-01-18T02:50:46.969Z",
-      "config": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "trello"
-        ],
-        "env": {}
-      }
-    },
-    {
-      "qualifiedName": "@upstash/context7-mcp",
-      "displayName": "Context7",
-      "connectionType": "local",
-      "status": "connected",
-      "installedAt": "2026-01-18T02:54:10.581Z",
-      "config": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "@upstash/context7-mcp"
-        ],
-        "env": {}
+          "googlecalendar"
+        ]
       }
     }
   ]
